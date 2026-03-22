@@ -3,902 +3,1489 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ТЗ — Islam Checker AI</title>
+<title>VibeCoder — Учебный план 60 уроков</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Fira+Code:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+/* ═══════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════ */
+:root {
+  --bg:        #f0f4ff;
+  --surface:   #ffffff;
+  --border:    #e2e8f8;
 
-  :root {
-    --bg: #0d0d0f;
-    --surface: #16161a;
-    --surface2: #1e1e24;
-    --border: #2a2a35;
-    --accent: #7c3aed;
-    --accent2: #a855f7;
-    --text: #e8e8f0;
-    --muted: #8888a0;
-    --green: #22c55e;
-    --orange: #f97316;
-    --red: #ef4444;
-  }
+  --m1: #6366f1; --m1-light: #eef0ff; --m1-mid: #c7d2fe;
+  --m2: #0ea5e9; --m2-light: #e0f6ff; --m2-mid: #bae6fd;
+  --m3: #10b981; --m3-light: #e0fdf4; --m3-mid: #a7f3d0;
+  --m4: #f59e0b; --m4-light: #fffbeb; --m4-mid: #fde68a;
+  --m5: #ec4899; --m5-light: #fdf2f8; --m5-mid: #fbcfe8;
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  --text:    #1e1b4b;
+  --text2:   #4b5563;
+  --muted:   #9ca3af;
 
-  body {
-    font-family: 'IBM Plex Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    line-height: 1.7;
-    font-size: 14px;
-  }
+  --radius:  14px;
+  --shadow:  0 4px 24px rgba(99,102,241,0.10);
+}
 
-  /* PRINT */
-  @media print {
-    body { background: white; color: #111; font-size: 11pt; }
-    .sidebar { display: none; }
-    .main { margin-left: 0; }
-    .page-header { background: #7c3aed !important; -webkit-print-color-adjust: exact; }
-    section { page-break-inside: avoid; }
-    h2 { page-break-after: avoid; }
-  }
+/* ═══════════════════════════════
+   RESET + BASE
+═══════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
 
-  /* LAYOUT */
-  .layout { display: flex; min-height: 100vh; }
+/* ═══════════════════════════════
+   TOPBAR
+═══════════════════════════════ */
+.topbar {
+  background: white;
+  border-bottom: 2px solid var(--border);
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  box-shadow: 0 2px 16px rgba(99,102,241,0.08);
+}
 
-  .sidebar {
-    width: 240px;
-    background: var(--surface);
-    border-right: 1px solid var(--border);
-    position: fixed;
-    top: 0; left: 0; bottom: 0;
-    overflow-y: auto;
-    padding: 32px 0;
-    z-index: 10;
-  }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--text);
+  letter-spacing: -0.03em;
+  cursor: pointer;
+}
+.logo-emoji {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+}
+.logo span { color: #6366f1; }
 
-  .sidebar-logo {
-    padding: 0 24px 28px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 20px;
-  }
+/* ═══════════════════════════════
+   NAV TABS
+═══════════════════════════════ */
+.nav-tabs {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding: 0 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.nav-tabs::-webkit-scrollbar { display: none; }
 
-  .sidebar-logo .logo-mark {
-    width: 36px; height: 36px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px;
-    margin-bottom: 10px;
-  }
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--text2);
+  white-space: nowrap;
+  transition: all 0.2s;
+  letter-spacing: -0.01em;
+}
+.nav-tab:hover { background: var(--bg); }
+.nav-tab.active { color: white; box-shadow: 0 2px 12px rgba(0,0,0,0.15); }
 
-  .sidebar-logo .title { font-size: 13px; font-weight: 600; color: var(--text); }
-  .sidebar-logo .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.nav-tab[data-month="0"].active { background: linear-gradient(135deg,#6366f1,#818cf8); }
+.nav-tab[data-month="1"].active { background: linear-gradient(135deg,#6366f1,#818cf8); }
+.nav-tab[data-month="2"].active { background: linear-gradient(135deg,#0ea5e9,#38bdf8); }
+.nav-tab[data-month="3"].active { background: linear-gradient(135deg,#10b981,#34d399); }
+.nav-tab[data-month="4"].active { background: linear-gradient(135deg,#f59e0b,#fbbf24); }
+.nav-tab[data-month="5"].active { background: linear-gradient(135deg,#ec4899,#f472b6); }
 
-  .nav-section { padding: 0 12px; margin-bottom: 8px; }
-  .nav-section-label {
-    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
-    color: var(--muted); text-transform: uppercase;
-    padding: 0 12px; margin-bottom: 6px;
-  }
-  .nav-item {
-    display: block; padding: 7px 12px; border-radius: 8px;
-    color: var(--muted); text-decoration: none; font-size: 13px;
-    transition: all 0.15s;
-  }
-  .nav-item:hover { background: var(--surface2); color: var(--text); }
-  .nav-item.active { background: rgba(124,58,237,0.15); color: var(--accent2); }
-  .nav-num {
-    display: inline-block; width: 18px; height: 18px;
-    background: var(--surface2); border-radius: 4px;
-    text-align: center; line-height: 18px;
-    font-size: 10px; font-weight: 600; margin-right: 8px;
-    color: var(--muted);
-  }
+/* ═══════════════════════════════
+   VIEWS
+═══════════════════════════════ */
+.view { display: none; }
+.view.active { display: block; animation: fadeIn 0.3s ease; }
 
-  .main {
-    margin-left: 240px;
-    flex: 1;
-    max-width: 900px;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
 
-  /* HEADER */
-  .page-header {
-    background: linear-gradient(135deg, #1a0533 0%, #0d0d1a 50%, #0a1a0a 100%);
-    border-bottom: 1px solid var(--border);
-    padding: 56px 60px 48px;
-    position: relative;
-    overflow: hidden;
-  }
+/* ═══════════════════════════════
+   HOME PAGE
+═══════════════════════════════ */
+.home-hero {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+  padding: 64px 24px 80px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.home-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='20' cy='20' r='1.5' fill='white' fill-opacity='0.08'/%3E%3C/svg%3E");
+}
+.home-hero-content { position: relative; z-index: 1; }
+.home-badge {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.35);
+  border-radius: 100px;
+  padding: 6px 18px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.home-hero h1 {
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+.home-hero h1 em {
+  font-style: normal;
+  background: linear-gradient(90deg, #fde68a, #fbbf24);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.home-hero p {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.85);
+  max-width: 560px;
+  margin: 0 auto 36px;
+  line-height: 1.6;
+  font-weight: 600;
+}
 
-  .page-header::before {
-    content: '';
-    position: absolute;
-    top: -60px; right: -60px;
-    width: 300px; height: 300px;
-    background: radial-gradient(circle, rgba(124,58,237,0.2) 0%, transparent 70%);
-    pointer-events: none;
-  }
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+.chip {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 100px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: white;
+}
 
-  .doc-label {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3);
-    border-radius: 6px; padding: 4px 12px;
-    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
-    color: var(--accent2); text-transform: uppercase;
-    margin-bottom: 20px;
-  }
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.hero-stat {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 16px;
+  padding: 16px 24px;
+  text-align: center;
+  min-width: 110px;
+}
+.hero-stat-num {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: white;
+  line-height: 1;
+}
+.hero-stat-label {
+  font-size: 0.7rem;
+  color: rgba(255,255,255,0.75);
+  margin-top: 4px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
 
-  .page-header h1 {
-    font-size: 32px; font-weight: 700; line-height: 1.2;
-    color: #fff; margin-bottom: 12px;
-  }
+/* ═══════════════════════════════
+   MONTH CARDS GRID
+═══════════════════════════════ */
+.months-section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px;
+}
 
-  .page-header .subtitle {
-    font-size: 15px; color: var(--muted); margin-bottom: 32px;
-  }
+.section-label {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.section-title {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  margin-bottom: 24px;
+  color: var(--text);
+}
 
-  .meta-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
+.months-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
 
-  .meta-item {
-    background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.07);
-    border-radius: 10px; padding: 14px 16px;
-  }
+.month-card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 24px;
+  border: 2px solid var(--border);
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  overflow: hidden;
+}
+.month-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 4px;
+}
+.month-card.c1::before { background: linear-gradient(90deg,#6366f1,#818cf8); }
+.month-card.c2::before { background: linear-gradient(90deg,#0ea5e9,#38bdf8); }
+.month-card.c3::before { background: linear-gradient(90deg,#10b981,#34d399); }
+.month-card.c4::before { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+.month-card.c5::before { background: linear-gradient(90deg,#ec4899,#f472b6); }
 
-  .meta-item .label { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 4px; }
-  .meta-item .value { font-size: 13px; font-weight: 600; color: var(--text); }
+.month-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.12); }
 
-  /* CONTENT */
-  .content { padding: 48px 60px; }
+.month-card-emoji { font-size: 2rem; margin-bottom: 12px; display: block; }
+.month-card-num {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+  font-family: 'Fira Code', monospace;
+}
+.month-card-title {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+}
+.month-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.mtag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 100px;
+  letter-spacing: 0.02em;
+}
+.mtag.c1 { background: var(--m1-light); color: var(--m1); }
+.mtag.c2 { background: var(--m2-light); color: var(--m2); }
+.mtag.c3 { background: var(--m3-light); color: var(--m3); }
+.mtag.c4 { background: var(--m4-light); color: var(--m4); }
+.mtag.c5 { background: var(--m5-light); color: var(--m5); }
 
-  section { margin-bottom: 52px; }
+/* ═══════════════════════════════
+   MONTH PAGE
+═══════════════════════════════ */
+.month-page { max-width: 1200px; margin: 0 auto; padding: 32px 24px 64px; }
 
-  h2 {
-    font-size: 20px; font-weight: 700; color: #fff;
-    margin-bottom: 20px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 12px;
-  }
+.month-header {
+  border-radius: 20px;
+  padding: 36px 32px;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.month-header.bg1 { background: linear-gradient(135deg, #6366f1, #818cf8); }
+.month-header.bg2 { background: linear-gradient(135deg, #0ea5e9, #38bdf8); }
+.month-header.bg3 { background: linear-gradient(135deg, #10b981, #34d399); }
+.month-header.bg4 { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+.month-header.bg5 { background: linear-gradient(135deg, #ec4899, #f472b6); }
 
-  h2 .section-num {
-    width: 28px; height: 28px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border-radius: 7px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 12px; font-weight: 700; color: #fff;
-    flex-shrink: 0;
-  }
+.month-header::after {
+  content: attr(data-emoji);
+  position: absolute;
+  right: 24px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 6rem;
+  opacity: 0.18;
+  pointer-events: none;
+}
 
-  h3 {
-    font-size: 15px; font-weight: 600; color: var(--text);
-    margin-bottom: 12px; margin-top: 24px;
-  }
+.month-header-left {}
+.month-header-tag {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.month-header h2 {
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  font-weight: 900;
+  color: white;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.month-header-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.header-chip {
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: white;
+}
+.month-header-right { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
 
-  p { color: #c0c0d0; margin-bottom: 12px; }
+.btn-pdf {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.btn-pdf:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.2); }
+.btn-pdf.c1 { color: var(--m1); }
+.btn-pdf.c2 { color: var(--m2); }
+.btn-pdf.c3 { color: var(--m3); }
+.btn-pdf.c4 { color: var(--m4); }
+.btn-pdf.c5 { color: var(--m5); }
 
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
-    margin-bottom: 16px;
-  }
+/* ═══════════════════════════════
+   TABLE
+═══════════════════════════════ */
+.table-wrap {
+  background: white;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-  .card-title {
-    font-size: 14px; font-weight: 600; color: var(--text);
-    margin-bottom: 8px;
-  }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
 
-  .card p { margin-bottom: 0; font-size: 13px; }
+thead tr {
+  background: var(--bg);
+  border-bottom: 2px solid var(--border);
+}
+thead th {
+  padding: 14px 16px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-align: left;
+  white-space: nowrap;
+  font-family: 'Fira Code', monospace;
+}
+thead th:first-child { width: 70px; text-align: center; }
 
-  /* GRID */
-  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
-  .card-grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+tbody tr {
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #f8f9ff; }
 
-  /* FEATURE LIST */
-  .feature-list { list-style: none; }
-  .feature-list li {
-    padding: 10px 0;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: flex-start; gap: 12px;
-    color: #c0c0d0; font-size: 13px;
-  }
-  .feature-list li:last-child { border-bottom: none; }
-  .feature-list li::before {
-    content: '✓';
-    color: var(--green);
-    font-weight: 700; flex-shrink: 0;
-    margin-top: 1px;
-  }
+/* special rows */
+tbody tr.row-special { background: #fafcff; }
+tbody tr.row-git { }
+tbody tr.row-test { }
 
-  /* TABLE */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 20px;
-    font-size: 13px;
-  }
+td {
+  padding: 14px 16px;
+  font-size: 0.87rem;
+  line-height: 1.5;
+  color: var(--text2);
+  vertical-align: top;
+}
+td:first-child {
+  text-align: center;
+  font-family: 'Fira Code', monospace;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
 
-  th {
-    background: var(--surface2);
-    color: var(--muted);
-    font-weight: 600;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    padding: 10px 14px;
-    text-align: left;
-    border-bottom: 1px solid var(--border);
-  }
+.lesson-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  font-family: 'Fira Code', monospace;
+}
+.lb1 { background: var(--m1-light); color: var(--m1); }
+.lb2 { background: var(--m2-light); color: var(--m2); }
+.lb3 { background: var(--m3-light); color: var(--m3); }
+.lb4 { background: var(--m4-light); color: var(--m4); }
+.lb5 { background: var(--m5-light); color: var(--m5); }
 
-  td {
-    padding: 11px 14px;
-    border-bottom: 1px solid rgba(42,42,53,0.6);
-    color: #c0c0d0;
-    vertical-align: top;
-  }
+td.topic { font-weight: 800; color: var(--text); font-size: 0.9rem; }
+td.tasks { color: var(--text2); font-size: 0.84rem; }
+td.project {}
 
-  tr:last-child td { border-bottom: none; }
+.project-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.pp1 { background: var(--m1-light); color: var(--m1); }
+.pp2 { background: var(--m2-light); color: var(--m2); }
+.pp3 { background: var(--m3-light); color: var(--m3); }
+.pp4 { background: var(--m4-light); color: var(--m4); }
+.pp5 { background: var(--m5-light); color: var(--m5); }
 
-  /* BADGE */
-  .badge {
-    display: inline-block; padding: 2px 8px;
-    border-radius: 5px; font-size: 11px; font-weight: 600;
-  }
-  .badge-purple { background: rgba(124,58,237,0.2); color: var(--accent2); }
-  .badge-green { background: rgba(34,197,94,0.15); color: var(--green); }
-  .badge-orange { background: rgba(249,115,22,0.15); color: var(--orange); }
-  .badge-red { background: rgba(239,68,68,0.15); color: var(--red); }
-  .badge-gray { background: rgba(136,136,160,0.15); color: var(--muted); }
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 0.73rem;
+  font-weight: 800;
+  font-family: 'Fira Code', monospace;
+}
+.sb-git  { background: #fef3c7; color: #92400e; }
+.sb-test { background: #fce7f3; color: #9d174d; }
+.sb-both { background: #e0f2fe; color: #075985; }
+.sb-deploy { background: #d1fae5; color: #065f46; }
+.sb-none { color: var(--muted); font-size: 0.75rem; }
 
-  /* TECH STACK */
-  .tech-tag {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 8px; padding: 6px 12px;
-    font-size: 12px; font-weight: 500; color: var(--text);
-    margin: 4px;
-  }
+/* ═══════════════════════════════
+   MONTH SUMMARY BAR
+═══════════════════════════════ */
+.summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.summary-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.summary-pill-icon { font-size: 1rem; }
+.summary-pill-val { font-size: 1.1rem; font-weight: 900; }
+.summary-pill-key { color: var(--muted); font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 
-  /* FLOW DIAGRAM */
-  .flow {
-    display: flex; align-items: center; gap: 0;
-    flex-wrap: wrap; margin: 20px 0;
-  }
+/* ═══════════════════════════════
+   PROGRESS INDICATOR
+═══════════════════════════════ */
+.progress-block {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.progress-label { font-weight: 800; font-size: 0.85rem; flex: 1; min-width: 160px; }
+.progress-bar-wrap { flex: 2; min-width: 200px; }
+.progress-track {
+  background: var(--bg);
+  border-radius: 100px;
+  height: 12px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 100px;
+  transition: width 0.6s ease;
+}
+.pf1 { background: linear-gradient(90deg, #6366f1, #818cf8); }
+.pf2 { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+.pf3 { background: linear-gradient(90deg, #10b981, #34d399); }
+.pf4 { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.pf5 { background: linear-gradient(90deg, #ec4899, #f472b6); }
+.progress-pct { font-family: 'Fira Code', monospace; font-size: 0.85rem; font-weight: 600; color: var(--muted); }
 
-  .flow-step {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 10px; padding: 12px 18px;
-    text-align: center; font-size: 12px;
-    flex: 1; min-width: 100px;
-  }
-
-  .flow-step .step-num {
-    font-size: 10px; color: var(--accent2); font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .flow-step .step-label { color: var(--text); font-weight: 500; }
-
-  .flow-arrow {
-    color: var(--muted); font-size: 18px; padding: 0 6px;
-    flex-shrink: 0;
-  }
-
-  /* ROLE CARD */
-  .role-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px; overflow: hidden;
-    margin-bottom: 14px;
-  }
-
-  .role-header {
-    background: var(--surface2);
-    padding: 12px 20px;
-    display: flex; align-items: center; gap: 10px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .role-icon { font-size: 18px; }
-  .role-name { font-weight: 600; font-size: 14px; color: var(--text); }
-  .role-body { padding: 16px 20px; }
-
-  /* TIMELINE */
-  .timeline { position: relative; padding-left: 28px; }
-  .timeline::before {
-    content: '';
-    position: absolute; left: 7px; top: 8px; bottom: 8px;
-    width: 2px; background: var(--border);
-  }
-
-  .tl-item { position: relative; margin-bottom: 24px; }
-  .tl-dot {
-    position: absolute; left: -25px; top: 4px;
-    width: 14px; height: 14px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: 2px solid var(--bg);
-  }
-
-  .tl-phase {
-    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--accent2);
-    margin-bottom: 4px;
-  }
-
-  .tl-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
-
-  /* CALLOUT */
-  .callout {
-    background: rgba(124,58,237,0.08);
-    border: 1px solid rgba(124,58,237,0.25);
-    border-left: 3px solid var(--accent);
-    border-radius: 8px; padding: 14px 18px;
-    margin-bottom: 16px;
-    font-size: 13px; color: #c0c0d0;
-  }
-
-  .callout strong { color: var(--accent2); }
-
-  /* SCORE BARS */
-  .score-bar-wrap { margin: 8px 0 16px; }
-  .score-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
-  .score-bar { height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
-  .score-fill { height: 100%; border-radius: 4px; }
-  .fill-green { background: linear-gradient(90deg, #16a34a, #22c55e); }
-  .fill-orange { background: linear-gradient(90deg, #c2410c, #f97316); }
-  .fill-red { background: linear-gradient(90deg, #b91c1c, #ef4444); }
-
+/* ═══════════════════════════════
+   MOBILE NAV BOTTOM
+═══════════════════════════════ */
+@media(max-width: 640px) {
+  .topbar { padding: 0 12px; }
+  .month-header { padding: 24px 20px; }
+  .month-header::after { font-size: 4rem; right: 12px; }
+  .month-page { padding: 20px 12px 80px; }
+  .months-section { padding: 28px 12px; }
+  td { padding: 10px 12px; font-size: 0.82rem; }
+  .btn-pdf { padding: 8px 14px; font-size: 0.76rem; }
+}
 </style>
 </head>
 <body>
 
-<div class="layout">
+<!-- ═══ TOPBAR ═══ -->
+<nav class="topbar">
+  <div class="logo" onclick="showView('home')">
+    <div class="logo-emoji">⚡</div>
+    Islam<span>DEV</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-month="0" onclick="showView('home')">🏠 Главная</button>
+    <button class="nav-tab" data-month="1" onclick="showView('m1')">🐍 Месяц 1</button>
+    <button class="nav-tab" data-month="2" onclick="showView('m2')">🎮 Месяц 2</button>
+    <button class="nav-tab" data-month="3" onclick="showView('m3')">🌐 Месяц 3</button>
+    <button class="nav-tab" data-month="4" onclick="showView('m4')">⚡ Месяц 4</button>
+    <button class="nav-tab" data-month="5" onclick="showView('m5')">🤖 Месяц 5</button>
+  </div>
+</nav>
 
-  <!-- SIDEBAR -->
-  <nav class="sidebar">
-    <div class="sidebar-logo">
-      <div class="logo-mark">🤖</div>
-      <div class="title">Islam Checker AI</div>
-      <div class="sub">Техническое задание</div>
+<!-- ═══════════════════════════════════════
+     HOME PAGE
+═══════════════════════════════════════ -->
+<div class="view active" id="view-home">
+
+  <div class="home-hero">
+    <div class="home-hero-content">
+      <div class="home-badge">📚 Учебный план · 2024</div>
+      <h1>Учись программировать<br>вместе с <em>VibeCoder</em></h1>
+      <p>5-месячный учебный план для детей 9–15 лет. Каждый урок — 40 минут. Всего 60 уроков от Python до AI.</p>
+      <div class="hero-chips">
+        <div class="chip">🐍 Python</div>
+        <div class="chip">🎮 Pygame</div>
+        <div class="chip">🤖 Telegram Bot</div>
+        <div class="chip">🌐 HTML & CSS</div>
+        <div class="chip">🎨 Figma</div>
+        <div class="chip">⚡ JavaScript</div>
+        <div class="chip">🧩 Django</div>
+        <div class="chip">🦾 AI Tools</div>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num">5</div><div class="hero-stat-label">Месяцев</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">60</div><div class="hero-stat-label">Уроков</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">40</div><div class="hero-stat-label">Мин/урок</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">12+</div><div class="hero-stat-label">Проектов</div></div>
+      </div>
     </div>
+  </div>
 
-    <div class="nav-section">
-      <div class="nav-section-label">Документ</div>
-      <a href="#overview" class="nav-item active"><span class="nav-num">1</span>Обзор</a>
-      <a href="#goals" class="nav-item"><span class="nav-num">2</span>Цели</a>
-      <a href="#users" class="nav-item"><span class="nav-num">3</span>Пользователи</a>
-    </div>
+  <div class="months-section">
+    <p class="section-label">Выбери месяц</p>
+    <h2 class="section-title">Программа курса</h2>
 
-    <div class="nav-section">
-      <div class="nav-section-label">Функционал</div>
-      <a href="#pages" class="nav-item"><span class="nav-num">4</span>Страницы</a>
-      <a href="#features" class="nav-item"><span class="nav-num">5</span>Функции</a>
-      <a href="#ai" class="nav-item"><span class="nav-num">6</span>ИИ-проверка</a>
-    </div>
+    <div class="months-grid">
 
-    <div class="nav-section">
-      <div class="nav-section-label">Техника</div>
-      <a href="#tech" class="nav-item"><span class="nav-num">7</span>Стек</a>
-      <a href="#security" class="nav-item"><span class="nav-num">8</span>Безопасность</a>
-      <a href="#timeline" class="nav-item"><span class="nav-num">9</span>Сроки</a>
-      <a href="#nfr" class="nav-item"><span class="nav-num">10</span>Требования</a>
-    </div>
-  </nav>
-
-  <!-- MAIN -->
-  <main class="main">
-
-    <!-- PAGE HEADER -->
-    <div class="page-header">
-      <div class="doc-label">📄 Техническое задание v1.0</div>
-      <h1>Islam Checker AI</h1>
-      <p class="subtitle">Платформа автоматической проверки домашних заданий с помощью искусственного интеллекта</p>
-
-      <div class="meta-grid">
-        <div class="meta-item">
-          <div class="label">Версия</div>
-          <div class="value">1.0.0</div>
+      <div class="month-card c1" onclick="showView('m1')">
+        <span class="month-card-emoji">🐍</span>
+        <div class="month-card-num">Месяц 01 · 12 уроков</div>
+        <div class="month-card-title">Python — Основы программирования</div>
+        <div class="month-card-tags">
+          <span class="mtag c1">Python</span>
+          <span class="mtag c1">Git</span>
+          <span class="mtag c1">Логика</span>
         </div>
-        <div class="meta-item">
-          <div class="label">Дата</div>
-          <div class="value">Март 2025</div>
+      </div>
+
+      <div class="month-card c2" onclick="showView('m2')">
+        <span class="month-card-emoji">🎮</span>
+        <div class="month-card-num">Месяц 02 · 12 уроков</div>
+        <div class="month-card-title">Pygame + Telegram Bot + Django</div>
+        <div class="month-card-tags">
+          <span class="mtag c2">Pygame</span>
+          <span class="mtag c2">Bot</span>
+          <span class="mtag c2">Django</span>
         </div>
-        <div class="meta-item">
-          <div class="label">Статус</div>
-          <div class="value" style="color: var(--green)">✓ Актуально</div>
+      </div>
+
+      <div class="month-card c3" onclick="showView('m3')">
+        <span class="month-card-emoji">🌐</span>
+        <div class="month-card-num">Месяц 03 · 12 уроков</div>
+        <div class="month-card-title">HTML + CSS + Figma</div>
+        <div class="month-card-tags">
+          <span class="mtag c3">HTML</span>
+          <span class="mtag c3">CSS</span>
+          <span class="mtag c3">Figma</span>
         </div>
-        <div class="meta-item">
-          <div class="label">Аудитория</div>
-          <div class="value">Студенты / Преп.</div>
+      </div>
+
+      <div class="month-card c4" onclick="showView('m4')">
+        <span class="month-card-emoji">⚡</span>
+        <div class="month-card-num">Месяц 04 · 12 уроков</div>
+        <div class="month-card-title">JavaScript + Интерактив</div>
+        <div class="month-card-tags">
+          <span class="mtag c4">JavaScript</span>
+          <span class="mtag c4">DOM</span>
+          <span class="mtag c4">Bootstrap</span>
+        </div>
+      </div>
+
+      <div class="month-card c5" onclick="showView('m5')">
+        <span class="month-card-emoji">🤖</span>
+        <div class="month-card-num">Месяц 05 · 12 уроков</div>
+        <div class="month-card-title">Vibe Coder + AI</div>
+        <div class="month-card-tags">
+          <span class="mtag c5">AI Tools</span>
+          <span class="mtag c5">Финал</span>
+          <span class="mtag c5">Проект</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- overall progress -->
+    <div style="margin-top:40px;">
+      <p class="section-label">Общий прогресс</p>
+      <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+        <div style="background:white;border:2px solid var(--border);border-radius:12px;padding:16px 20px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:0.82rem;font-weight:700;">
+            <span>Весь курс (60 уроков)</span>
+            <span style="font-family:'Fira Code',monospace;color:var(--muted)">60 / 60</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill pf1" style="width:100%"></div>
+          </div>
         </div>
       </div>
     </div>
-
-    <div class="content">
-
-      <!-- 1. OVERVIEW -->
-      <section id="overview">
-        <h2><span class="section-num">1</span>Обзор проекта</h2>
-        <p>
-          <strong>Islam Checker AI</strong> — веб-платформа для автоматической проверки домашних заданий студентов по предметам: <strong>HTML, CSS, JavaScript, Python, Английский язык</strong>. Система принимает код или текст, анализирует его с помощью ИИ и выдаёт оценку, детальный комментарий, а также определяет — написан ли ответ человеком или сгенерирован ИИ.
-        </p>
-
-        <div class="callout">
-          <strong>Ключевая идея:</strong> Преподаватель задаёт условие задания, студент загружает решение — платформа мгновенно выставляет оценку от 0 до 100 баллов и даёт развёрнутый фидбэк на русском языке.
-        </div>
-
-        <div class="card-grid">
-          <div class="card">
-            <div class="card-title">🎯 Для студентов</div>
-            <p>Быстрая проверка ДЗ, мгновенная оценка и комментарий от ИИ, удобное отслеживание своих результатов.</p>
-          </div>
-          <div class="card">
-            <div class="card-title">👩‍🏫 Для преподавателей</div>
-            <p>Таблица всех сданных работ с фильтрами, определение авторства (человек / ИИ), экономия времени на проверку.</p>
-          </div>
-        </div>
-      </section>
-
-      <!-- 2. GOALS -->
-      <section id="goals">
-        <h2><span class="section-num">2</span>Цели и задачи</h2>
-
-        <h3>Бизнес-цели</h3>
-        <ul class="feature-list">
-          <li>Сократить время преподавателя на проверку ДЗ в 5–10 раз</li>
-          <li>Обеспечить мгновенную обратную связь для студентов</li>
-          <li>Создать прозрачную систему оценивания с историей результатов</li>
-          <li>Выявлять работы, написанные ИИ-инструментами (ChatGPT и др.)</li>
-        </ul>
-
-        <h3>Технические задачи</h3>
-        <ul class="feature-list">
-          <li>Реализовать форму загрузки кода/текста с подсветкой синтаксиса</li>
-          <li>Интегрировать ИИ-модель (GPT-4 / Claude) для анализа и оценивания</li>
-          <li>Разработать систему хранения и фильтрации результатов</li>
-          <li>Обеспечить безопасность данных студентов</li>
-          <li>Поддерживать 5 типов заданий: HTML, CSS, JS, Python, English</li>
-        </ul>
-      </section>
-
-      <!-- 3. USERS -->
-      <section id="users">
-        <h2><span class="section-num">3</span>Роли пользователей</h2>
-
-        <div class="role-card">
-          <div class="role-header">
-            <span class="role-icon">🎓</span>
-            <span class="role-name">Студент</span>
-            <span class="badge badge-green" style="margin-left: auto">Публичный доступ</span>
-          </div>
-          <div class="role-body">
-            <ul class="feature-list">
-              <li>Заполняет форму: ФИО, группа, тип задания, условие задания</li>
-              <li>Вставляет код или текст решения в редактор</li>
-              <li>Нажимает «Отправить» и видит результат с оценкой и комментарием ИИ</li>
-              <li>Просматривает свои прошлые результаты</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="role-card">
-          <div class="role-header">
-            <span class="role-icon">👩‍🏫</span>
-            <span class="role-name">Преподаватель / Администратор</span>
-            <span class="badge badge-purple" style="margin-left: auto">Авторизация</span>
-          </div>
-          <div class="role-body">
-            <ul class="feature-list">
-              <li>Просматривает таблицу всех сданных работ</li>
-              <li>Фильтрует по группе, типу задания, дате, автору (человек/ИИ)</li>
-              <li>Открывает детальную карточку студента с кодом и фидбэком</li>
-              <li>Видит вердикт ИИ: написано человеком или ИИ-инструментом</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- 4. PAGES -->
-      <section id="pages">
-        <h2><span class="section-num">4</span>Структура страниц</h2>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Страница</th>
-              <th>URL</th>
-              <th>Доступ</th>
-              <th>Описание</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>Главная</strong></td>
-              <td><code style="color: var(--accent2)">/</code></td>
-              <td><span class="badge badge-green">Публичный</span></td>
-              <td>Лендинг: описание платформы, видео-инструкции, преимущества</td>
-            </tr>
-            <tr>
-              <td><strong>Отправить задание</strong></td>
-              <td><code style="color: var(--accent2)">/submit</code></td>
-              <td><span class="badge badge-green">Публичный</span></td>
-              <td>Форма загрузки ДЗ студентом (шаг 1 и шаг 2)</td>
-            </tr>
-            <tr>
-              <td><strong>Результаты</strong></td>
-              <td><code style="color: var(--accent2)">/results</code></td>
-              <td><span class="badge badge-purple">Авторизация</span></td>
-              <td>Таблица всех работ с фильтрами и поиском</td>
-            </tr>
-            <tr>
-              <td><strong>Карточка студента</strong></td>
-              <td><code style="color: var(--accent2)">/results/:id</code></td>
-              <td><span class="badge badge-purple">Авторизация</span></td>
-              <td>Детали работы: код, условие, оценка, фидбэк</td>
-            </tr>
-            <tr>
-              <td><strong>Комментарий от ИИ</strong></td>
-              <td><code style="color: var(--accent2)">/results/:id/feedback</code></td>
-              <td><span class="badge badge-orange">Роль</span></td>
-              <td>Страница результата: оценка, цветовая индикация, текст фидбэка</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <!-- 5. FEATURES -->
-      <section id="features">
-        <h2><span class="section-num">5</span>Функциональные требования</h2>
-
-        <h3>5.1 Форма отправки задания (2 шага)</h3>
-
-        <div class="card">
-          <div class="card-title">Шаг 1 — Данные студента</div>
-          <table style="margin-bottom: 0">
-            <thead>
-              <tr><th>Поле</th><th>Тип</th><th>Обязательное</th><th>Примечание</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>ФИО</td><td>text input</td><td>✓</td><td>Полное имя студента</td></tr>
-              <tr><td>Группа</td><td>text input</td><td>✓</td><td>Например: JS-24, FE-3</td></tr>
-              <tr><td>Тип задания</td><td>select dropdown</td><td>✓</td><td>HTML / CSS / JavaScript / Python / English</td></tr>
-              <tr><td>Условие задания</td><td>text input</td><td>✓</td><td>Что нужно было сделать</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <div class="card-title">Шаг 2 — Редактор кода / текста</div>
-          <ul class="feature-list">
-            <li>Редактор с подсветкой синтаксиса (Monaco Editor или CodeMirror)</li>
-            <li>Автоматическая иконка языка (🟧 HTML, 🔵 CSS, 🟡 JS, 🐍 Python, 🅰 English)</li>
-            <li>Кнопки «Назад» и «Отправить»</li>
-            <li>Валидация: поле не может быть пустым при отправке</li>
-          </ul>
-        </div>
-
-        <h3>5.2 Таблица результатов</h3>
-        <p>Страница для преподавателя со следующими колонками:</p>
-        <table>
-          <thead>
-            <tr><th>#</th><th>Колонка</th><th>Описание</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>1</td><td>ФИО</td><td>Имя студента</td></tr>
-            <tr><td>2</td><td>Группа</td><td>Учебная группа</td></tr>
-            <tr><td>3</td><td>Тип задания</td><td>HTML / CSS / JS / Python / English</td></tr>
-            <tr><td>4</td><td>Балл</td><td>Оценка 0–100</td></tr>
-            <tr><td>5</td><td>Комментарий от ИИ</td><td>Краткий фидбэк</td></tr>
-            <tr><td>6</td><td>Автор (AI / Сам)</td><td>Определение авторства</td></tr>
-            <tr><td>7</td><td>Дата</td><td>Дата и время сдачи</td></tr>
-          </tbody>
-        </table>
-
-        <p>Фильтры над таблицей: поиск по ФИО, фильтр по группе, типу задания, автору, диапазону дат.</p>
-
-        <h3>5.3 Карточка студента</h3>
-        <ul class="feature-list">
-          <li>Имя студента, ID, группа, дата сдачи, название задания, имя файла</li>
-          <li>Блок «Условие задания» — что требовалось сделать</li>
-          <li>Блок «Ответ студента» — код или текст с подсветкой</li>
-          <li>Ссылка на страницу «Комментарий от ИИ»</li>
-        </ul>
-
-        <h3>5.4 Страница «Комментарий от ИИ»</h3>
-
-        <div class="card-grid3">
-          <div class="card">
-            <div class="card-title" style="color: var(--green)">80–100 баллов</div>
-            <div class="score-bar-wrap">
-              <div class="score-bar"><div class="score-fill fill-green" style="width: 92%"></div></div>
-            </div>
-            <p style="font-size:12px">Зелёная шкала. Отличная работа!</p>
-          </div>
-          <div class="card">
-            <div class="card-title" style="color: var(--orange)">50–79 баллов</div>
-            <div class="score-bar-wrap">
-              <div class="score-bar"><div class="score-fill fill-orange" style="width: 66%"></div></div>
-            </div>
-            <p style="font-size:12px">Оранжевая шкала. Есть ошибки.</p>
-          </div>
-          <div class="card">
-            <div class="card-title" style="color: var(--red)">0–49 баллов</div>
-            <div class="score-bar-wrap">
-              <div class="score-bar"><div class="score-fill fill-red" style="width: 24%"></div></div>
-            </div>
-            <p style="font-size:12px">Красная шкала. Слабая работа.</p>
-          </div>
-        </div>
-
-        <p>На странице также отображается: количество баллов, развёрнутый AI Feedback (на русском), вердикт «Автор: ЧЕЛОВЕК / ИИ», кнопка «Назад к таблице».</p>
-      </section>
-
-      <!-- 6. AI -->
-      <section id="ai">
-        <h2><span class="section-num">6</span>ИИ-проверка</h2>
-
-        <h3>Процесс проверки</h3>
-
-        <div class="flow">
-          <div class="flow-step">
-            <div class="step-num">01</div>
-            <div class="step-label">Студент отправляет форму</div>
-          </div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step">
-            <div class="step-num">02</div>
-            <div class="step-label">Backend формирует промпт</div>
-          </div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step">
-            <div class="step-num">03</div>
-            <div class="step-label">Запрос к GPT-4 / Claude API</div>
-          </div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step">
-            <div class="step-num">04</div>
-            <div class="step-label">ИИ возвращает JSON с оценкой</div>
-          </div>
-          <div class="flow-arrow">→</div>
-          <div class="flow-step">
-            <div class="step-num">05</div>
-            <div class="step-label">Запись в БД, показ результата</div>
-          </div>
-        </div>
-
-        <h3>Структура промпта к ИИ</h3>
-        <div class="card">
-          <pre style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #c0c0d0; white-space: pre-wrap; line-height: 1.6">Ты — строгий преподаватель по [тип_задания].
-
-Условие задания: [условие]
-Ответ студента: [код/текст]
-
-Оцени работу по шкале 0–100 баллов. 
-Дай развёрнутый комментарий на русском языке.
-Определи: написан ли ответ человеком или ИИ-инструментом.
-
-Верни ответ строго в формате JSON:
-{
-  "score": число (0-100),
-  "feedback": "подробный комментарий",
-  "is_ai_generated": true/false,
-  "short_comment": "краткое резюме для таблицы"
-}</pre>
-        </div>
-
-        <h3>Критерии оценки по предметам</h3>
-        <table>
-          <thead>
-            <tr><th>Предмет</th><th>Критерии проверки</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><span class="badge badge-orange">HTML</span></td>
-              <td>Семантика, корректность тегов, доступность, структура</td>
-            </tr>
-            <tr>
-              <td><span class="badge badge-purple">CSS</span></td>
-              <td>Правильность селекторов, адаптивность, чистота кода</td>
-            </tr>
-            <tr>
-              <td><span class="badge badge-orange">JavaScript</span></td>
-              <td>Правильность алгоритма, обработка ошибок, читаемость</td>
-            </tr>
-            <tr>
-              <td><span class="badge badge-green">Python</span></td>
-              <td>Логика, синтаксис PEP-8, эффективность решения</td>
-            </tr>
-            <tr>
-              <td><span class="badge badge-gray">English</span></td>
-              <td>Грамматика, словарный запас, структура, логика</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <!-- 7. TECH STACK -->
-      <section id="tech">
-        <h2><span class="section-num">7</span>Технический стек</h2>
-
-        <div class="card-grid">
-          <div class="card">
-            <div class="card-title">🖥️ Frontend</div>
-            <div style="margin-top: 10px">
-              <span class="tech-tag">⚛️ React.js</span>
-              <span class="tech-tag">🎨 Tailwind CSS</span>
-              <span class="tech-tag">📝 Monaco Editor</span>
-              <span class="tech-tag">🔀 React Router</span>
-              <span class="tech-tag">📊 Axios</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">⚙️ Backend</div>
-            <div style="margin-top: 10px">
-              <span class="tech-tag">🟢 Node.js</span>
-              <span class="tech-tag">🚀 Express.js</span>
-              <span class="tech-tag">🗄️ PostgreSQL</span>
-              <span class="tech-tag">🔒 JWT Auth</span>
-              <span class="tech-tag">📦 Prisma ORM</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">🤖 ИИ-интеграция</div>
-            <div style="margin-top: 10px">
-              <span class="tech-tag">🧠 OpenAI GPT-4</span>
-              <span class="tech-tag">⚡ Claude API</span>
-              <span class="tech-tag">🔑 API Key Management</span>
-            </div>
-          </div>
-          <div class="card">
-            <div class="card-title">🚀 DevOps</div>
-            <div style="margin-top: 10px">
-              <span class="tech-tag">🐳 Docker</span>
-              <span class="tech-tag">☁️ Vercel (FE)</span>
-              <span class="tech-tag">🖥️ VPS (BE)</span>
-              <span class="tech-tag">📁 Supabase</span>
-            </div>
-          </div>
-        </div>
-
-        <h3>Структура базы данных</h3>
-        <table>
-          <thead><tr><th>Таблица</th><th>Поля</th></tr></thead>
-          <tbody>
-            <tr>
-              <td><strong>submissions</strong></td>
-              <td>id, full_name, group_name, task_type, task_description, student_code, score, ai_feedback, short_comment, is_ai_generated, created_at</td>
-            </tr>
-            <tr>
-              <td><strong>users</strong></td>
-              <td>id, email, password_hash, role (admin/teacher), created_at</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-
-      <!-- 8. SECURITY -->
-      <section id="security">
-        <h2><span class="section-num">8</span>Безопасность данных</h2>
-
-        <ul class="feature-list">
-          <li>Все данные студентов хранятся в зашифрованной базе данных</li>
-          <li>Доступ к таблице результатов — только через JWT авторизацию</li>
-          <li>API-ключи ИИ-моделей хранятся только на сервере (никогда во frontend)</li>
-          <li>HTTPS-соединение на всех страницах</li>
-          <li>Rate limiting на форму отправки (не более 10 заданий в час с одного IP)</li>
-          <li>Валидация и санитизация всех входных данных на сервере</li>
-          <li>Коды и тексты студентов не передаются третьим лицам</li>
-        </ul>
-      </section>
-
-      <!-- 9. TIMELINE -->
-      <section id="timeline">
-        <h2><span class="section-num">9</span>Этапы разработки</h2>
-
-        <div class="timeline">
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-phase">Фаза 1 · 1–2 неделя</div>
-            <div class="tl-title">Дизайн и проектирование</div>
-            <ul class="feature-list" style="font-size: 13px">
-              <li>Figma-макеты всех страниц (главная, форма, таблица, фидбэк)</li>
-              <li>Проектирование схемы базы данных</li>
-              <li>Настройка репозитория, CI/CD pipeline</li>
-            </ul>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-phase">Фаза 2 · 3–4 неделя</div>
-            <div class="tl-title">Backend + ИИ-интеграция</div>
-            <ul class="feature-list" style="font-size: 13px">
-              <li>REST API: POST /submit, GET /results, GET /results/:id</li>
-              <li>Интеграция с OpenAI / Claude API</li>
-              <li>Разработка промптов, тестирование на всех 5 типах заданий</li>
-              <li>База данных PostgreSQL + Prisma ORM</li>
-            </ul>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot"></div>
-            <div class="tl-phase">Фаза 3 · 5–6 неделя</div>
-            <div class="tl-title">Frontend разработка</div>
-            <ul class="feature-list" style="font-size: 13px">
-              <li>Главная страница (лендинг)</li>
-              <li>Форма отправки задания (2 шага) с Monaco Editor</li>
-              <li>Страница результатов с фильтрами и таблицей</li>
-              <li>Страница комментария ИИ с цветовой шкалой</li>
-            </ul>
-          </div>
-
-          <div class="tl-item">
-            <div class="tl-dot" style="background: var(--green)"></div>
-            <div class="tl-phase">Фаза 4 · 7 неделя</div>
-            <div class="tl-title">Тестирование и деплой</div>
-            <ul class="feature-list" style="font-size: 13px">
-              <li>Полное тестирование всех функций</li>
-              <li>Исправление ошибок</li>
-              <li>Деплой на production-сервер</li>
-              <li>Сдача проекта и документация</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <!-- 10. NFR -->
-      <section id="nfr">
-        <h2><span class="section-num">10</span>Нефункциональные требования</h2>
-
-        <div class="card-grid">
-          <div class="card">
-            <div class="card-title">⚡ Производительность</div>
-            <ul class="feature-list" style="font-size: 13px">
-              <li>Время ответа ИИ: не более 15 сек</li>
-              <li>Загрузка страниц: менее 2 сек</li>
-              <li>До 100 одновременных пользователей</li>
-            </ul>
-          </div>
-          <div class="card">
-            <div class="card-title">📱 Адаптивность</div>
-            <ul class="feature-list" style="font-size: 13px">
-              <li>Корректная работа на ПК, планшете, телефоне</li>
-              <li>Поддержка браузеров: Chrome, Safari, Firefox</li>
-              <li>Редактор кода адаптирован для мобильных</li>
-            </ul>
-          </div>
-          <div class="card">
-            <div class="card-title">🌐 Локализация</div>
-            <ul class="feature-list" style="font-size: 13px">
-              <li>Интерфейс: русский язык</li>
-              <li>Фидбэк от ИИ: русский язык</li>
-              <li>Поддержка кириллицы в полях ввода</li>
-            </ul>
-          </div>
-          <div class="card">
-            <div class="card-title">🔄 Надёжность</div>
-            <ul class="feature-list" style="font-size: 13px">
-              <li>Uptime: не менее 99%</li>
-              <li>Резервное копирование БД раз в сутки</li>
-              <li>Graceful fallback при ошибке ИИ API</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="callout" style="margin-top: 24px">
-          <strong>Замечание по редактору кода:</strong> Для HTML-типа задания редактор должен показывать три вкладки (HTML / CSS / JS). Для остальных типов — один редактор. Это соответствует скриншоту с тремя иконками в форме.
-        </div>
-      </section>
-
-    </div>
-  </main>
+  </div>
 </div>
+
+<!-- ═══════════════════════════════════════
+     MONTH 1 — Python
+═══════════════════════════════════════ -->
+<div class="view" id="view-m1">
+  <div class="month-page">
+    <div class="month-header bg1" data-emoji="🐍">
+      <div class="month-header-left">
+        <div class="month-header-tag">Месяц 01 · 12 уроков · 40 мин каждый</div>
+        <h2>Python — Основы</h2>
+        <div class="month-header-chips">
+          <span class="header-chip">🐍 Python</span>
+          <span class="header-chip">🔁 Циклы</span>
+          <span class="header-chip">🔧 Функции</span>
+          <span class="header-chip">📦 Git</span>
+        </div>
+      </div>
+      <div class="month-header-right">
+        <button class="btn-pdf c1" onclick="printMonth('m1')">📄 Скачать PDF</button>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-pill"><span class="summary-pill-icon">📖</span><div><div class="summary-pill-val">12</div><div class="summary-pill-key">Уроков</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">🛠️</span><div><div class="summary-pill-val">3</div><div class="summary-pill-key">Проекта</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">✅</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Тест</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">📦</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Git коммит</div></div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Тема</th>
+            <th>Задачи</th>
+            <th>Мини-проект</th>
+            <th>Тест / Git</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lesson-badge lb1">1</span></td>
+            <td class="topic">Введение в Python, print, переменные</td>
+            <td class="tasks">Вывести "Привет, мир!", имя и возраст</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">2</span></td>
+            <td class="topic">Типы данных, операции</td>
+            <td class="tasks">+, -, *, / для чисел</td>
+            <td><span class="project-pill pp1">🔢 Калькулятор</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">3</span></td>
+            <td class="topic">input — ввод от пользователя</td>
+            <td class="tasks">Ввод чисел пользователем, вывод суммы</td>
+            <td><span class="project-pill pp1">⌨️ Калькулятор с input</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">4</span></td>
+            <td class="topic">if / else — условия</td>
+            <td class="tasks">Угадай число (часть 1)</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">5</span></td>
+            <td class="topic">if / else + логика</td>
+            <td class="tasks">Подсказки "больше / меньше"</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">6</span></td>
+            <td class="topic">Циклы for</td>
+            <td class="tasks">Таблица умножения</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">7</span></td>
+            <td class="topic">Циклы while</td>
+            <td class="tasks">Игра "Угадай число" с попытками</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">8</span></td>
+            <td class="topic">Функции</td>
+            <td class="tasks">Сумма списка чисел</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">9</span></td>
+            <td class="topic">Списки</td>
+            <td class="tasks">Список покупок: добавить / удалить</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb1">10</span></td>
+            <td class="topic">Мини-проект</td>
+            <td class="tasks">Чат-бот: приветствие, прощание</td>
+            <td><span class="project-pill pp1">💬 Простой чат-бот</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr class="row-git">
+            <td><span class="lesson-badge lb1">11</span></td>
+            <td class="topic">Git — контроль версий</td>
+            <td class="tasks">Создать репозиторий, залить проекты</td>
+            <td>—</td>
+            <td><span class="status-badge sb-git">📦 Git</span></td>
+          </tr>
+          <tr class="row-test">
+            <td><span class="lesson-badge lb1">12</span></td>
+            <td class="topic">Тест 1</td>
+            <td class="tasks">Проверка переменных, условий, циклов, функций</td>
+            <td>—</td>
+            <td><span class="status-badge sb-test">✅ Тест</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="progress-block">
+      <div class="progress-label">📊 Прогресс месяца</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-track"><div class="progress-fill pf1" style="width:100%"></div></div>
+      </div>
+      <div class="progress-pct">12 / 12 уроков</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MONTH 2 — Pygame + Bot + Django
+═══════════════════════════════════════ -->
+<div class="view" id="view-m2">
+  <div class="month-page">
+    <div class="month-header bg2" data-emoji="🎮">
+      <div class="month-header-left">
+        <div class="month-header-tag">Месяц 02 · 12 уроков · 40 мин каждый</div>
+        <h2>Игры + Pygame + Bot + Django</h2>
+        <div class="month-header-chips">
+          <span class="header-chip">🎮 Pygame</span>
+          <span class="header-chip">🤖 Telegram Bot</span>
+          <span class="header-chip">🧩 Django</span>
+          <span class="header-chip">📦 Git</span>
+        </div>
+      </div>
+      <div class="month-header-right">
+        <button class="btn-pdf c2" onclick="printMonth('m2')">📄 Скачать PDF</button>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-pill"><span class="summary-pill-icon">📖</span><div><div class="summary-pill-val">12</div><div class="summary-pill-key">Уроков</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">🛠️</span><div><div class="summary-pill-val">4</div><div class="summary-pill-key">Проекта</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">✅</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Тест</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">📦</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Git коммит</div></div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Тема</th>
+            <th>Задачи</th>
+            <th>Мини-проект</th>
+            <th>Тест / Git</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lesson-badge lb2">1</span></td>
+            <td class="topic">Списки и логика</td>
+            <td class="tasks">Викторина 5 вопросов, подсчёт очков</td>
+            <td><span class="project-pill pp2">🎯 Викторина</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">2</span></td>
+            <td class="topic">Функции + return</td>
+            <td class="tasks">Викторина через функции</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">3</span></td>
+            <td class="topic">Циклы + списки</td>
+            <td class="tasks">Игра "Камень-ножницы-бумага"</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">4</span></td>
+            <td class="topic">Логика + условия</td>
+            <td class="tasks">Добавить счёт в игру</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">5</span></td>
+            <td class="topic">Pygame — вводная</td>
+            <td class="tasks">Окно, прямоугольник двигается клавишами</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">6</span></td>
+            <td class="topic">Pygame — простая игра</td>
+            <td class="tasks">Добавить цель, ловить объект</td>
+            <td><span class="project-pill pp2">🕹️ Поймай объект</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">7</span></td>
+            <td class="topic">Telegram Bot — вводная</td>
+            <td class="tasks">Бот отвечает "Привет"</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">8</span></td>
+            <td class="topic">Telegram Bot — логика</td>
+            <td class="tasks">Мини-викторина через команды</td>
+            <td><span class="project-pill pp2">🤖 Quiz Bot</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">9</span></td>
+            <td class="topic">Django — начало</td>
+            <td class="tasks">Создать проект, добавить Hello World</td>
+            <td><span class="project-pill pp2">🧩 Django Hello</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb2">10</span></td>
+            <td class="topic">Мини-проект</td>
+            <td class="tasks">Текстовая RPG</td>
+            <td><span class="project-pill pp2">⚔️ Текстовая RPG</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr class="row-git">
+            <td><span class="lesson-badge lb2">11</span></td>
+            <td class="topic">Git — обновление</td>
+            <td class="tasks">Залить все проекты месяца</td>
+            <td>—</td>
+            <td><span class="status-badge sb-git">📦 Git</span></td>
+          </tr>
+          <tr class="row-test">
+            <td><span class="lesson-badge lb2">12</span></td>
+            <td class="topic">Тест 2</td>
+            <td class="tasks">Python + Pygame + Bot + Django</td>
+            <td>—</td>
+            <td><span class="status-badge sb-test">✅ Тест</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="progress-block">
+      <div class="progress-label">📊 Прогресс месяца</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-track"><div class="progress-fill pf2" style="width:100%"></div></div>
+      </div>
+      <div class="progress-pct">12 / 12 уроков</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MONTH 3 — HTML + CSS + Figma
+═══════════════════════════════════════ -->
+<div class="view" id="view-m3">
+  <div class="month-page">
+    <div class="month-header bg3" data-emoji="🌐">
+      <div class="month-header-left">
+        <div class="month-header-tag">Месяц 03 · 12 уроков · 40 мин каждый</div>
+        <h2>HTML + CSS + Figma</h2>
+        <div class="month-header-chips">
+          <span class="header-chip">🌐 HTML</span>
+          <span class="header-chip">🎨 CSS</span>
+          <span class="header-chip">🖌️ Figma</span>
+          <span class="header-chip">📱 Bootstrap</span>
+        </div>
+      </div>
+      <div class="month-header-right">
+        <button class="btn-pdf c3" onclick="printMonth('m3')">📄 Скачать PDF</button>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-pill"><span class="summary-pill-icon">📖</span><div><div class="summary-pill-val">12</div><div class="summary-pill-key">Уроков</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">🛠️</span><div><div class="summary-pill-val">2</div><div class="summary-pill-key">Проекта</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">✅</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Тест</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">🖌️</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Figma макет</div></div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Тема</th>
+            <th>Задачи</th>
+            <th>Мини-проект</th>
+            <th>Тест / Git</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lesson-badge lb3">1</span></td>
+            <td class="topic">Введение в HTML</td>
+            <td class="tasks">Заголовки, параграфы, текст о себе</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">2</span></td>
+            <td class="topic">Списки, ссылки, картинки</td>
+            <td class="tasks">Добавить список, картинки, ссылки</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">3</span></td>
+            <td class="topic">Формы и input</td>
+            <td class="tasks">Контактная форма</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">4</span></td>
+            <td class="topic">Введение в CSS</td>
+            <td class="tasks">Цвет, фон, шрифт текста</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">5</span></td>
+            <td class="topic">Селекторы, классы, id</td>
+            <td class="tasks">Применить стили к разным блокам</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">6</span></td>
+            <td class="topic">Box model, margin, padding</td>
+            <td class="tasks">Настройка блоков</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">7</span></td>
+            <td class="topic">Flexbox / Grid</td>
+            <td class="tasks">Простая вёрстка макета</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">8</span></td>
+            <td class="topic">🖌️ Figma — введение</td>
+            <td class="tasks">Создать макет страницы-портфолио в Figma</td>
+            <td><span class="project-pill pp3">🖌️ Figma макет</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">9</span></td>
+            <td class="topic">Перенос макета в код</td>
+            <td class="tasks">Вёрстка макета из Figma в HTML + CSS</td>
+            <td><span class="project-pill pp3">🌐 Мини-портфолио</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">10</span></td>
+            <td class="topic">Bootstrap</td>
+            <td class="tasks">Стилизация портфолио с компонентами</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb3">11</span></td>
+            <td class="topic">CSS анимации</td>
+            <td class="tasks">Hover эффекты, плавное появление блоков</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr class="row-test">
+            <td><span class="lesson-badge lb3">12</span></td>
+            <td class="topic">Тест 3</td>
+            <td class="tasks">HTML + CSS + Figma</td>
+            <td>—</td>
+            <td><span class="status-badge sb-test">✅ Тест</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="progress-block">
+      <div class="progress-label">📊 Прогресс месяца</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-track"><div class="progress-fill pf3" style="width:100%"></div></div>
+      </div>
+      <div class="progress-pct">12 / 12 уроков</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MONTH 4 — JavaScript
+═══════════════════════════════════════ -->
+<div class="view" id="view-m4">
+  <div class="month-page">
+    <div class="month-header bg4" data-emoji="⚡">
+      <div class="month-header-left">
+        <div class="month-header-tag">Месяц 04 · 12 уроков · 40 мин каждый</div>
+        <h2>JavaScript + Интерактив</h2>
+        <div class="month-header-chips">
+          <span class="header-chip">⚡ JavaScript</span>
+          <span class="header-chip">🖱️ DOM</span>
+          <span class="header-chip">🎨 Bootstrap</span>
+          <span class="header-chip">🚀 Deploy</span>
+        </div>
+      </div>
+      <div class="month-header-right">
+        <button class="btn-pdf c4" onclick="printMonth('m4')">📄 Скачать PDF</button>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-pill"><span class="summary-pill-icon">📖</span><div><div class="summary-pill-val">12</div><div class="summary-pill-key">Уроков</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">🛠️</span><div><div class="summary-pill-val">3</div><div class="summary-pill-key">Проекта</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">✅</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Тест</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">🚀</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Deploy</div></div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Тема</th>
+            <th>Задачи</th>
+            <th>Мини-проект</th>
+            <th>Тест / Git</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lesson-badge lb4">1</span></td>
+            <td class="topic">Введение в JS, переменные</td>
+            <td class="tasks">alert, console.log, переменные</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">2</span></td>
+            <td class="topic">События (onclick)</td>
+            <td class="tasks">Кнопка-счётчик</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">3</span></td>
+            <td class="topic">if / else, логика в JS</td>
+            <td class="tasks">Расширить счётчик условиями</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">4</span></td>
+            <td class="topic">Функции JS</td>
+            <td class="tasks">Калькулятор на странице</td>
+            <td><span class="project-pill pp4">🔢 Калькулятор</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">5</span></td>
+            <td class="topic">Массивы, циклы</td>
+            <td class="tasks">Галерея картинок, смена по клику</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">6</span></td>
+            <td class="topic">DOM, getElement</td>
+            <td class="tasks">Изменить текст и цвет блока</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">7</span></td>
+            <td class="topic">Анимации JS + CSS</td>
+            <td class="tasks">Плавное появление блоков</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">8</span></td>
+            <td class="topic">Мини-проект</td>
+            <td class="tasks">Мини-игра "Угадай число"</td>
+            <td><span class="project-pill pp4">🎲 Угадай число</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">9</span></td>
+            <td class="topic">Bootstrap</td>
+            <td class="tasks">Добавить стилизованную кнопку</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb4">10</span></td>
+            <td class="topic">Мини-проект</td>
+            <td class="tasks">Интерактивное портфолио</td>
+            <td><span class="project-pill pp4">🖥️ Портфолио</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr class="row-git">
+            <td><span class="lesson-badge lb4">11</span></td>
+            <td class="topic">Git / Deploy</td>
+            <td class="tasks">Разместить проект онлайн</td>
+            <td>—</td>
+            <td><span class="status-badge sb-deploy">🚀 Deploy</span></td>
+          </tr>
+          <tr class="row-test">
+            <td><span class="lesson-badge lb4">12</span></td>
+            <td class="topic">Тест 4</td>
+            <td class="tasks">Проверка JS + HTML + CSS</td>
+            <td>—</td>
+            <td><span class="status-badge sb-test">✅ Тест</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="progress-block">
+      <div class="progress-label">📊 Прогресс месяца</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-track"><div class="progress-fill pf4" style="width:100%"></div></div>
+      </div>
+      <div class="progress-pct">12 / 12 уроков</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     MONTH 5 — Vibe Coder + AI
+═══════════════════════════════════════ -->
+<div class="view" id="view-m5">
+  <div class="month-page">
+    <div class="month-header bg5" data-emoji="🤖">
+      <div class="month-header-left">
+        <div class="month-header-tag">Месяц 05 · 12 уроков · 40 мин каждый</div>
+        <h2>Vibe Coder + AI</h2>
+        <div class="month-header-chips">
+          <span class="header-chip">🤖 AI Tools</span>
+          <span class="header-chip">🎙️ Voice AI</span>
+          <span class="header-chip">🖼️ Image AI</span>
+          <span class="header-chip">🏆 Финал</span>
+        </div>
+      </div>
+      <div class="month-header-right">
+        <button class="btn-pdf c5" onclick="printMonth('m5')">📄 Скачать PDF</button>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="summary-pill"><span class="summary-pill-icon">📖</span><div><div class="summary-pill-val">12</div><div class="summary-pill-key">Уроков</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">🛠️</span><div><div class="summary-pill-val">3</div><div class="summary-pill-key">Проекта</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">✅</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Финальный тест</div></div></div>
+      <div class="summary-pill"><span class="summary-pill-icon">🎓</span><div><div class="summary-pill-val">1</div><div class="summary-pill-key">Презентация</div></div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Тема</th>
+            <th>Задачи</th>
+            <th>Мини-проект</th>
+            <th>Тест / Git</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="lesson-badge lb5">1</span></td>
+            <td class="topic">Text AI</td>
+            <td class="tasks">Использовать AI для подсказок кода</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">2</span></td>
+            <td class="topic">AI voice / image</td>
+            <td class="tasks">Голосовые уведомления и картинки</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">3</span></td>
+            <td class="topic">Комбинированный проект</td>
+            <td class="tasks">Python + веб + JS mini-game</td>
+            <td><span class="project-pill pp5">🎮 Комбо-игра</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">4</span></td>
+            <td class="topic">Telegram Bot + AI</td>
+            <td class="tasks">Бот с вопросами и AI-ответами</td>
+            <td><span class="project-pill pp5">🤖 AI Bot</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">5</span></td>
+            <td class="topic">Интерфейс + AI</td>
+            <td class="tasks">Генерация текста для игры / сайта</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">6</span></td>
+            <td class="topic">Анимации + AI</td>
+            <td class="tasks">Появление блоков + AI фразы</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">7</span></td>
+            <td class="topic">Финальная игра</td>
+            <td class="tasks">Разработка финального прототипа</td>
+            <td><span class="project-pill pp5">🏆 Финальный проект</span></td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">8</span></td>
+            <td class="topic">Полировка</td>
+            <td class="tasks">Исправления и улучшения</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr class="row-test">
+            <td><span class="lesson-badge lb5">9</span></td>
+            <td class="topic">Тест 5 — Финальный</td>
+            <td class="tasks">Проверка всех навыков: Python + Веб + AI</td>
+            <td>—</td>
+            <td><span class="status-badge sb-test">✅ Тест</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">10</span></td>
+            <td class="topic">🎓 Презентация проектов</td>
+            <td class="tasks">Показать работы классу</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr>
+            <td><span class="lesson-badge lb5">11</span></td>
+            <td class="topic">Итоговое задание</td>
+            <td class="tasks">Финальный проект "Vibe Coder"</td>
+            <td>—</td>
+            <td><span class="sb-none">—</span></td>
+          </tr>
+          <tr class="row-git">
+            <td><span class="lesson-badge lb5">12</span></td>
+            <td class="topic">Git — завершение</td>
+            <td class="tasks">Залить финальные проекты на GitHub</td>
+            <td>—</td>
+            <td><span class="status-badge sb-git">📦 Git</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="progress-block">
+      <div class="progress-label">📊 Прогресс месяца</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-track"><div class="progress-fill pf5" style="width:100%"></div></div>
+      </div>
+      <div class="progress-pct">12 / 12 уроков</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════ -->
+<script>
+const views = {
+  home: 'view-home',
+  m1:   'view-m1',
+  m2:   'view-m2',
+  m3:   'view-m3',
+  m4:   'view-m4',
+  m5:   'view-m5',
+};
+
+const tabMonths = {
+  home: 0, m1: 1, m2: 2, m3: 3, m4: 4, m5: 5
+};
+
+function showView(name) {
+  // hide all
+  Object.values(views).forEach(id => {
+    document.getElementById(id).classList.remove('active');
+  });
+  // show target
+  document.getElementById(views[name]).classList.add('active');
+  // update tabs
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.classList.toggle('active', parseInt(tab.dataset.month) === tabMonths[name]);
+  });
+  // scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function printMonth(month) {
+  const monthNames = {
+    m1: 'Месяц 1 — Python Основы',
+    m2: 'Месяц 2 — Pygame + Bot + Django',
+    m3: 'Месяц 3 — HTML + CSS + Figma',
+    m4: 'Месяц 4 — JavaScript',
+    m5: 'Месяц 5 — Vibe Coder + AI'
+  };
+
+  // Collect table data from current month view
+  const viewEl = document.getElementById('view-' + month);
+  const rows = viewEl.querySelectorAll('tbody tr');
+  const title = monthNames[month];
+
+  let tableRows = '';
+  rows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const num = cells[0]?.innerText?.trim() || '';
+    const topic = cells[1]?.innerText?.trim() || '';
+    const tasks = cells[2]?.innerText?.trim() || '';
+    const proj = cells[3]?.innerText?.trim() || '—';
+    const test = cells[4]?.innerText?.trim() || '—';
+    tableRows += `<tr>
+      <td>${num}</td>
+      <td><strong>${topic}</strong></td>
+      <td>${tasks}</td>
+      <td>${proj}</td>
+      <td>${test}</td>
+    </tr>`;
+  });
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`<!DOCTYPE html><html><head>
+    <meta charset="UTF-8">
+    <title>${title}</title>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 32px; color: #1e1b4b; }
+      h1 { font-size: 1.6rem; margin-bottom: 6px; }
+      .sub { color: #6b7280; font-size: 0.85rem; margin-bottom: 24px; }
+      table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+      th { background: #f3f4f6; padding: 10px 12px; text-align: left; border: 1px solid #e5e7eb; }
+      td { padding: 9px 12px; border: 1px solid #e5e7eb; vertical-align: top; }
+      tr:nth-child(even) td { background: #f9fafb; }
+      .footer { margin-top: 24px; color: #9ca3af; font-size: 0.75rem; text-align: center; }
+    </style>
+  </head><body>
+    <h1>${title}</h1>
+    <div class="sub">VibeCoder · 5-месячный учебный план для детей 9–15 лет · 40 мин/урок</div>
+    <table>
+      <thead><tr><th>#</th><th>Тема</th><th>Задачи</th><th>Проект</th><th>Тест/Git</th></tr></thead>
+      <tbody>${tableRows}</tbody>
+    </table>
+    <div class="footer">© VibeCoder — Учебный план</div>
+  </body></html>`);
+  printWindow.document.close();
+  setTimeout(() => printWindow.print(), 400);
+}
+</script>
 
 </body>
 </html>
